@@ -1,7 +1,10 @@
+<h2>!!1/31일자로 프리티어가 만료되어 현재는 운영하고 있지 않음!!</h2>
 <div style="display: flex;justify-content: center"><img src="./server/docs/images/logo.png" width="300px" alt="사이드이펙트로고"></div>
 
 <h3>열정을 함께할 동료가 필요할 때, 사이드 이펙트</h3>
 <p>개발자, 디자이너 등 누구나 쉽게 프로젝트를 시작하고, 네트워킹할 수 있는 커뮤니티 플랫폼입니다</p>
+
+
 
 [서비스 구경하기](https://side-effect-frontend-dev.vercel.app/)
 
