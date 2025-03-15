@@ -84,4 +84,4 @@ jobs:
   
           script: |
             docker rm -f sideeffect
-            docker run -p 8081:8080 -d --name sideeffect sideeffect
+            docker run -p 8081:8080 -d -v ./sideeffect-images:/images --name sideeffect sideeffect
