@@ -5,63 +5,82 @@
 # This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
 
+
 # name: Java CI with Gradle
 
 # on:
 #   push:
-#     branches: [ "dev" ]
-#   pull_request:
-#     branches: [ "dev" ]
+#     branches: [ "main" ]
+
+# permissions:
+#   contents: read
 
 # jobs:
 #   build:
-
+#     # VM의실행 환경 지정 => 우분투 최신 버전
 #     runs-on: ubuntu-latest
-#     permissions:
-#       contents: read
 
+#     # 실행될 jobs를 순서대로 명시
 #     steps:
-#     - uses: actions/checkout@v4
-#     - name: Set up JDK 17
-#       uses: actions/setup-java@v4
+#     - name: Checkout
+#       uses: actions/checkout@v3
+
+#     # JDK 11 설치
+#     - name: Set up JDK 11
+#       uses: actions/setup-java@v3
 #       with:
-#         java-version: '17'
+#         java-version: '11'
 #         distribution: 'temurin'
 
-#     # Configure Gradle for optimal use in GitHub Actions, including caching of downloaded dependencies.
-#     # See: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
-#     - name: Setup Gradle
-#       uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
+#     # SECRET_YML 파일 생성
+#     - name: Make application-secret.yml
+#       run: |
+#         cd ./src/main/resources # resources 폴더로 이동
+#         touch ./application-secret.yml # application-secret.yml 생성
+#         echo "${{ secrets.SECRET_YML }}" > ./application-secret.yml # github actions에서 설정한 값을 application-secret.yml 파일에 쓰기
+        
+#     # Gradle Build를 위한 권한 부여
+#     - name: Grant execute permission for gradlew
+#       run: chmod +x gradlew
 
-#     - name: Build with Gradle Wrapper
-#       run: ./gradlew build
+#     # Gradle Build (test 제외)
+#     - name: Build with Gradle
+#       run: ./gradlew clean build -x test
 
-#     # NOTE: The Gradle Wrapper is the default and recommended way to run Gradle (https://docs.gradle.org/current/userguide/gradle_wrapper.html).
-#     # If your project does not have the Gradle Wrapper configured, you can use the following configuration to run Gradle with a specified version.
-#     #
-#     # - name: Setup Gradle
-#     #   uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
-#     #   with:
-#     #     gradle-version: '8.9'
-#     #
-#     # - name: Build with Gradle 8.9
-#     #   run: gradle build
-
-#   dependency-submission:
-
-#     runs-on: ubuntu-latest
-#     permissions:
-#       contents: write
-
-#     steps:
-#     - uses: actions/checkout@v4
-#     - name: Set up JDK 17
-#       uses: actions/setup-java@v4
+#     # DockerHub 로그인
+#     - name: DockerHub Login
+#       uses: docker/login-action@v2
 #       with:
-#         java-version: '17'
-#         distribution: 'temurin'
+#         username: ${{ secrets.DOCKERHUB_USERNAME }}
+#         password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-#     # Generates and submits a dependency graph, enabling Dependabot Alerts for all project dependencies.
-#     # See: https://github.com/gradle/actions/blob/main/dependency-submission/README.md
-#     - name: Generate and submit dependency graph
-#       uses: gradle/actions/dependency-submission@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
+#     # Docker 이미지 빌드
+#     - name: Docker Image Build
+#       run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_NAME }} .
+
+#     # DockerHub Push
+#     - name: DockerHub Push
+#       run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_NAME }}
+
+      
+  # EC2 인스턴스 접속 및 애플리케이션 실행
+  # deploy:
+  #   name: Deploy
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: appleboy/ssh-action@v0.1.6
+  #       with:
+  #         host: ${{ secrets.EC2_HOST }}
+  #         username: ${{ secrets.EC2_USERNAME }}
+  #         key: ${{ secrets.EC2_KEY }}
+  
+  #         script: |
+  #           rm prometheus.yml
+  #           touch ./prometheus.yml # prometheus.yml 생성
+  #           echo "${{ secrets.PROMETHEUS_YML }}" > ./prometheus.yml
+  
+  #           sudo wget https://raw.githubusercontent.com/ToyProject-yogiyo2/yogiyo-back/main/docker-compose.yml -O docker-compose.yml
+  #           docker rm -f ec2-user-spring-1
+  #           docker-compose pull && docker-compose up -d
+  #           docker image prune -a -f
