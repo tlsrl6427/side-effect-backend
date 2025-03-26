@@ -101,7 +101,7 @@ bootJar{
 }
 
 openapi3 {
-	server = "http://sideeffect.site"
+	server = "http://api.sideeffect.site"
 	title = "사이트 이펙트 API 문서"
 	description = "Spring REST Docs with SwaggerUI."
 	version = "0.0.1"
