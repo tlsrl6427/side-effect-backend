@@ -1,4 +1,3 @@
-<h2>!! 1/31일자로 프리티어가 만료되어 현재는 운영하고 있지 않음 !!</h2>
 <div style="display: flex;justify-content: center"><img src="./server/docs/images/logo.png" width="300px" alt="사이드이펙트로고"></div>
 
 <h3>열정을 함께할 동료가 필요할 때, 사이드 이펙트</h3>
@@ -6,13 +5,13 @@
 
 
 
-[서비스 구경하기](https://side-effect-frontend-dev.vercel.app/)
+[서비스 구경하기](http://sideeffect.site/)
 
 [팀 소개](https://github.com/Side-Effect-Team)
 
-[프론트 레포](https://github.com/Side-Effect-Team/side-effect-frontend)
+[프론트 레포](https://github.com/tlsrl6427/side-effect-frontend)
 
-[API 문서](https://sideeffectproject.com/docs/swagger-ui/index.html)
+[API 문서](http://api.sideeffect.site/docs/swagger-ui/index.html)
 
 <br>
 
